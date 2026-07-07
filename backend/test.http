@@ -1,0 +1,24 @@
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "0922333444",
+  "password": "test1234",
+  "userName": "陳大文"
+}
+### 登入
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "0922333444",
+  "password": "test1234"
+}
+### 登入
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+"phoneNumber": "0922333444",
+"password": "test1234"
+}
