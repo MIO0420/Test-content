@@ -35,7 +35,8 @@ public class AuthService {
                 request.getUserName(),
                 request.getEmail(),
                 request.getAddress(),
-                request.getBirthday()
+                request.getBirthday(),
+                request.getDefaultBranch()
         );
     }
 

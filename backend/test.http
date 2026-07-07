@@ -47,3 +47,5 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwicGhvbmVOdW1iZXIiOiIwO
 {
   "inventoryId": 1
 }
+### 還書
+GET http://localhost:8080/api/branches

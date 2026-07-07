@@ -39,4 +39,9 @@ public class RegisterRequest {
 
     public String getBirthday() { return birthday; }
     public void setBirthday(String birthday) { this.birthday = birthday; }
+
+    private Long defaultBranch;
+
+    public Long getDefaultBranch() { return defaultBranch; }
+    public void setDefaultBranch(Long defaultBranch) { this.defaultBranch = defaultBranch; }
 }
