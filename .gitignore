@@ -1,0 +1,22 @@
+﻿# ===== 編譯產物 =====
+target/
+backend/target/
+*.class
+
+# ===== IntelliJ IDEA =====
+.idea/
+*.iml
+
+# ===== 敏感設定（含密碼、密鑰，不可外洩）=====
+backend/src/main/resources/application.properties
+
+# ===== 前端 =====
+node_modules/
+frontend/dist/
+
+# ===== 系統檔 =====
+.DS_Store
+Thumbs.db
+
+# ===== 日誌 =====
+*.log
