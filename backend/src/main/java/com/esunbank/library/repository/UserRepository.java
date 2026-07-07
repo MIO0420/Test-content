@@ -14,6 +14,8 @@ public class UserRepository {
     private final SimpleJdbcCall registerUserCall;
     private final SimpleJdbcCall getAccountByPhoneCall;
     private final SimpleJdbcCall updateLastLoginCall;
+    private final SimpleJdbcCall getMyProfileCall;
+    private final SimpleJdbcCall updateMyProfileCall;
 
     public UserRepository(DataSource dataSource) {
         this.registerUserCall = new SimpleJdbcCall(dataSource)
@@ -22,6 +24,10 @@ public class UserRepository {
                 .withProcedureName("sp_get_account_by_phone");
         this.updateLastLoginCall = new SimpleJdbcCall(dataSource)
                 .withProcedureName("sp_update_last_login");
+        this.getMyProfileCall = new SimpleJdbcCall(dataSource)
+                .withProcedureName("sp_get_my_profile");
+        this.updateMyProfileCall = new SimpleJdbcCall(dataSource)
+                .withProcedureName("sp_update_my_profile");
     }
 
     /**
@@ -68,5 +74,28 @@ public class UserRepository {
         Map<String, Object> params = new HashMap<>();
         params.put("p_user_id", userId);
         updateLastLoginCall.execute(params);
+    }
+    /**
+     * 查詢個人資料
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getMyProfile(Long userId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("p_user_id", userId);
+        Map<String, Object> result = getMyProfileCall.execute(params);
+        List<Map<String, Object>> rows = (List<Map<String, Object>>) result.get("#result-set-1");
+        return (rows == null || rows.isEmpty()) ? null : rows.get(0);
+    }
+
+    /**
+     * 更新個人資料（email、address、default_branch）
+     */
+    public void updateMyProfile(Long userId, String email, String address, Long defaultBranch) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("p_user_id", userId);
+        params.put("p_email", (email == null || email.isEmpty()) ? null : email);
+        params.put("p_address", (address == null || address.isEmpty()) ? null : address);
+        params.put("p_default_branch", defaultBranch);
+        updateMyProfileCall.execute(params);
     }
 }

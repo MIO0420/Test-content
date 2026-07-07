@@ -11,7 +11,13 @@ import java.util.Map;
 
 @Service
 public class AuthService {
+    public java.util.Map<String, Object> getMyProfile(Long userId) {
+        return userRepository.getMyProfile(userId);
+    }
 
+    public void updateMyProfile(Long userId, String email, String address, Long defaultBranch) {
+        userRepository.updateMyProfile(userId, email, address, defaultBranch);
+    }
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
