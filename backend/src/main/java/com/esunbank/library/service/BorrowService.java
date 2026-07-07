@@ -25,4 +25,10 @@ public class BorrowService {
     public void returnBook(Long inventoryId) {
         borrowRepository.returnBook(inventoryId);
     }
+    /**
+     * 查詢某使用者目前未歸還的借閱清單
+     */
+    public java.util.List<java.util.Map<String, Object>> listMyBorrows(Long userId) {
+        return borrowRepository.listMyBorrows(userId);
+    }
 }

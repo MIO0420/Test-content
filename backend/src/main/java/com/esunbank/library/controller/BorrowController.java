@@ -58,4 +58,13 @@ public class BorrowController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Long) authentication.getPrincipal();
     }
+    /**
+     * 查詢我的借閱清單 API：GET /api/borrow/my
+     * 由 token 取得 userId，只回傳自己的借閱
+     */
+    @GetMapping("/my")
+    public ResponseEntity<java.util.List<java.util.Map<String, Object>>> myBorrows() {
+        Long userId = getCurrentUserId();
+        return ResponseEntity.ok(borrowService.listMyBorrows(userId));
+    }
 }
