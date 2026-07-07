@@ -2,7 +2,7 @@ package com.esunbank.library.controller;
 
 import com.esunbank.library.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -21,8 +21,8 @@ public class ProfileController {
      * 查詢我的資料：GET /api/profile
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getMyProfile() {
-        Long userId = getCurrentUserId();
+    public ResponseEntity<Map<String, Object>> getMyProfile(
+            @AuthenticationPrincipal Long userId) {
         return ResponseEntity.ok(authService.getMyProfile(userId));
     }
 
@@ -30,8 +30,9 @@ public class ProfileController {
      * 更新我的資料：PUT /api/profile
      */
     @PutMapping
-    public ResponseEntity<Map<String, Object>> updateMyProfile(@RequestBody Map<String, Object> body) {
-        Long userId = getCurrentUserId();
+    public ResponseEntity<Map<String, Object>> updateMyProfile(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody Map<String, Object> body) {
 
         String email = (String) body.get("email");
         String address = (String) body.get("address");
@@ -40,13 +41,6 @@ public class ProfileController {
                 : Long.valueOf(body.get("defaultBranch").toString());
 
         authService.updateMyProfile(userId, email, address, defaultBranch);
-
-        Map<String, Object> resp = new java.util.HashMap<>();
-        resp.put("message", "更新成功");
-        return ResponseEntity.ok(resp);
-    }
-
-    private Long getCurrentUserId() {
-        return (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(Map.of("message", "更新成功"));
     }
 }
