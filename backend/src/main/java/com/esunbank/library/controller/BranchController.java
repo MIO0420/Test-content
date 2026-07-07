@@ -1,5 +1,6 @@
 package com.esunbank.library.controller;
 
+import com.esunbank.library.common.dto.ApiResponse;
 import com.esunbank.library.repository.BranchRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ public class BranchController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> listBranches() {
-        return ResponseEntity.ok(branchRepository.listBranches());
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> listBranches() {
+        return ResponseEntity.ok(ApiResponse.success("查詢成功", branchRepository.listBranches()));
     }
 }

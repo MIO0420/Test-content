@@ -1,5 +1,6 @@
 package com.esunbank.library.controller;
 
+import com.esunbank.library.common.dto.ApiResponse;
 import com.esunbank.library.common.dto.BorrowRequest;
 import com.esunbank.library.common.dto.ReturnRequest;
 import com.esunbank.library.service.BorrowService;
@@ -26,24 +27,21 @@ public class BorrowController {
      * 借書人 userId 由 @AuthenticationPrincipal 從 JWT 注入，確保身分可信
      */
     @PostMapping
-    public ResponseEntity<Map<String, Object>> borrow(
+    public ResponseEntity<ApiResponse<Map<String, Object>>> borrow(
             @AuthenticationPrincipal Long userId,
             @Valid @RequestBody BorrowRequest request) {
 
         Long recordId = borrowService.borrowBook(userId, request.getInventoryId());
-        return ResponseEntity.ok(Map.of(
-                "recordId", recordId,
-                "message", "借閱成功"
-        ));
+        return ResponseEntity.ok(ApiResponse.success("借閱成功", Map.of("recordId", recordId)));
     }
 
     /**
      * 還書 API：POST /api/borrow/return
      */
     @PostMapping("/return")
-    public ResponseEntity<Map<String, Object>> returnBook(@Valid @RequestBody ReturnRequest request) {
+    public ResponseEntity<ApiResponse<Void>> returnBook(@Valid @RequestBody ReturnRequest request) {
         borrowService.returnBook(request.getInventoryId());
-        return ResponseEntity.ok(Map.of("message", "歸還成功"));
+        return ResponseEntity.ok(ApiResponse.success("歸還成功"));
     }
 
     /**
@@ -51,8 +49,8 @@ public class BorrowController {
      * userId 由 token 注入，只回傳自己的借閱
      */
     @GetMapping("/my")
-    public ResponseEntity<List<Map<String, Object>>> myBorrows(
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> myBorrows(
             @AuthenticationPrincipal Long userId) {
-        return ResponseEntity.ok(borrowService.listMyBorrows(userId));
+        return ResponseEntity.ok(ApiResponse.success("查詢成功", borrowService.listMyBorrows(userId)));
     }
 }

@@ -1,5 +1,6 @@
 package com.esunbank.library.controller;
 
+import com.esunbank.library.common.dto.ApiResponse;
 import com.esunbank.library.common.dto.LoginRequest;
 import com.esunbank.library.common.dto.RegisterRequest;
 import com.esunbank.library.service.AuthService;
@@ -7,7 +8,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -24,26 +24,20 @@ public class AuthController {
      * 註冊 API：POST /api/auth/register
      */
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> register(@Valid @RequestBody RegisterRequest request) {
         Long userId = authService.register(request);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("userId", userId);
-        response.put("message", "註冊成功");
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("註冊成功", Map.of("userId", userId)));
     }
 
     /**
      * 登入 API：POST /api/auth/login
      */
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> login(@Valid @RequestBody LoginRequest request) {
         Map<String, Object> result = authService.login(
                 request.getPhoneNumber(),
                 request.getPassword()
         );
-        result.put("message", "登入成功");
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(ApiResponse.success("登入成功", result));
     }
 }

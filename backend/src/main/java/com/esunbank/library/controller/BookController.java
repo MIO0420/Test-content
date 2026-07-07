@@ -1,5 +1,6 @@
 package com.esunbank.library.controller;
 
+import com.esunbank.library.common.dto.ApiResponse;
 import com.esunbank.library.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,8 @@ public class BookController {
      * 查詢書籍清單 API：GET /api/books
      */
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> listBooks() {
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> listBooks() {
         List<Map<String, Object>> books = bookService.listBooks();
-        return ResponseEntity.ok(books);
+        return ResponseEntity.ok(ApiResponse.success("查詢成功", books));
     }
 }

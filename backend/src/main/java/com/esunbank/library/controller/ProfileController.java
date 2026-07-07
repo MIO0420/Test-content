@@ -1,5 +1,6 @@
 package com.esunbank.library.controller;
 
+import com.esunbank.library.common.dto.ApiResponse;
 import com.esunbank.library.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,16 +22,16 @@ public class ProfileController {
      * 查詢我的資料：GET /api/profile
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getMyProfile(
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getMyProfile(
             @AuthenticationPrincipal Long userId) {
-        return ResponseEntity.ok(authService.getMyProfile(userId));
+        return ResponseEntity.ok(ApiResponse.success("查詢成功", authService.getMyProfile(userId)));
     }
 
     /**
      * 更新我的資料：PUT /api/profile
      */
     @PutMapping
-    public ResponseEntity<Map<String, Object>> updateMyProfile(
+    public ResponseEntity<ApiResponse<Void>> updateMyProfile(
             @AuthenticationPrincipal Long userId,
             @RequestBody Map<String, Object> body) {
 
@@ -41,6 +42,6 @@ public class ProfileController {
                 : Long.valueOf(body.get("defaultBranch").toString());
 
         authService.updateMyProfile(userId, email, address, defaultBranch);
-        return ResponseEntity.ok(Map.of("message", "更新成功"));
+        return ResponseEntity.ok(ApiResponse.success("更新成功"));
     }
 }
