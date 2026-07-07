@@ -306,6 +306,46 @@ BEGIN
 END$$
 DELIMITER ;
 
+-- sp_get_my_profile：查詢個人完整資料（含分館名稱）
+DROP PROCEDURE IF EXISTS sp_get_my_profile;
+DELIMITER $$
+CREATE PROCEDURE sp_get_my_profile(
+  IN p_user_id BIGINT
+)
+BEGIN
+  SELECT
+    a.phone_number,
+    p.user_name,
+    p.email,
+    p.address,
+    p.birthday,
+    p.default_branch,
+    b.branch_name AS default_branch_name
+  FROM user_account a
+  JOIN user_profile p ON a.user_id = p.user_id
+  LEFT JOIN branch b ON p.default_branch = b.branch_id
+  WHERE a.user_id = p_user_id;
+END$$
+DELIMITER ;
+
+-- sp_update_my_profile：更新個人資料（僅 email、address、default_branch 可改）
+DROP PROCEDURE IF EXISTS sp_update_my_profile;
+DELIMITER $$
+CREATE PROCEDURE sp_update_my_profile(
+  IN p_user_id        BIGINT,
+  IN p_email          VARCHAR(100),
+  IN p_address        VARCHAR(255),
+  IN p_default_branch BIGINT
+)
+BEGIN
+  UPDATE user_profile
+  SET email = p_email,
+      address = p_address,
+      default_branch = p_default_branch
+  WHERE user_id = p_user_id;
+END$$
+DELIMITER ;
+
 -- =====================================================================
 -- DDL 結束
 -- =====================================================================
