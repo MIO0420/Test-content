@@ -2,7 +2,8 @@
   <div class="page">
     <header class="topbar">
       <h1>📚 圖書借閱系統</h1>
-      <div class="user-area">
+        <div class="user-area">
+        <router-link to="/my-borrows" class="nav-link">我的借閱</router-link>
         <span>{{ authStore.userName }} 您好</span>
         <button class="logout-btn" @click="handleLogout">登出</button>
       </div>
@@ -23,22 +24,40 @@
             <th>操作</th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="book in books" :key="book.isbn">
-            <td>{{ book.name }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ book.category }}</td>
-            <td>{{ book.language }}</td>
-            <td>{{ book.available_count }} / {{ book.total_count }}</td>
-            <td>
-              <button
-                class="borrow-btn"
-                :disabled="book.available_count < 1"
-                @click="handleBorrow(book)">
-                {{ book.available_count < 1 ? '已借完' : '借閱' }}
-              </button>
-            </td>
-          </tr>
+<tbody>
+          <template v-for="book in books" :key="book.isbn">
+            <tr>
+              <td>
+                <a href="#" class="book-name" @click.prevent="toggleDetail(book.isbn)">
+                  {{ book.name }}
+                </a>
+              </td>
+              <td>{{ book.author }}</td>
+              <td>{{ book.category }}</td>
+              <td>{{ book.language }}</td>
+              <td>{{ book.available_count }} / {{ book.total_count }}</td>
+              <td>
+                <button
+                  class="borrow-btn"
+                  :disabled="book.available_count < 1"
+                  @click="handleBorrow(book)">
+                  {{ book.available_count < 1 ? '已借完' : '借閱' }}
+                </button>
+              </td>
+            </tr>
+            <tr v-if="expandedIsbn === book.isbn" class="detail-row">
+              <td colspan="6">
+                <div class="detail">
+                  <p v-if="book.translator"><strong>譯者：</strong>{{ book.translator }}</p>
+                  <p v-if="book.original_author"><strong>原文作者：</strong>{{ book.original_author }}</p>
+                  <p v-if="book.publisher"><strong>出版社：</strong>{{ book.publisher }}</p>
+                  <p v-if="book.published_date"><strong>出版日期：</strong>{{ book.published_date }}</p>
+                  <p><strong>ISBN：</strong>{{ book.isbn }}</p>
+                  <p v-if="book.introduction"><strong>簡介：</strong>{{ book.introduction }}</p>
+                </div>
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
       <p v-else class="empty">載入中或暫無書籍...</p>
@@ -57,6 +76,11 @@ const authStore = useAuthStore()
 
 const books = ref([])
 const msg = ref('')
+const expandedIsbn = ref('')
+
+const toggleDetail = (isbn) => {
+  expandedIsbn.value = expandedIsbn.value === isbn ? '' : isbn
+}
 
 const loadBooks = async () => {
   try {
@@ -92,6 +116,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.book-name {
+  color: #1a6c3f;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+.book-name:hover { text-decoration: underline; }
+.detail-row td { background: #f9faf9; }
+.detail { padding: 8px 4px; font-size: 14px; color: #555; line-height: 1.8; }
+.detail strong { color: #333; }
 .page { min-height: 100vh; background: #f0f2f5; }
 .topbar {
   background: #1a6c3f;
@@ -103,6 +137,8 @@ onMounted(() => {
 }
 .topbar h1 { font-size: 20px; }
 .user-area { display: flex; align-items: center; gap: 16px; font-size: 14px; }
+.nav-link { color: white; text-decoration: none; padding: 6px 10px; }
+.nav-link:hover { text-decoration: underline; }
 .logout-btn {
   background: rgba(255,255,255,0.2);
   color: white;
