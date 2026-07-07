@@ -1,3 +1,4 @@
+
 <template>
   <div class="auth-container">
     <div class="auth-card">
@@ -32,6 +33,16 @@
           <input v-model="birthday" type="date" />
         </div>
 
+        <div class="form-group">
+          <label>預設取書館（選填）</label>
+          <select v-model="defaultBranch">
+            <option value="">請選擇分館</option>
+            <option v-for="b in branches" :key="b.branch_id" :value="b.branch_id">
+              {{ b.city }} - {{ b.branch_name }}
+            </option>
+          </select>
+        </div>
+
         <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
         <p v-if="successMsg" class="success">{{ successMsg }}</p>
 
@@ -48,9 +59,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import request from '@/api/request'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -64,10 +76,39 @@ const loading = ref(false)
 const email = ref('')
 const address = ref('')
 const birthday = ref('')
+const defaultBranch = ref('')
+const branches = ref([])
+
+onMounted(async () => {
+  try {
+    branches.value = await request.get('/api/branches')
+  } catch (err) {
+    console.error('載入分館失敗', err)
+  }
+})
 
 const handleRegister = async () => {
   errorMsg.value = ''
   successMsg.value = ''
+
+  // === 前端防呆驗證 ===
+  if (!/^09\d{8}$/.test(phoneNumber.value)) {
+    errorMsg.value = '手機號碼格式錯誤（需為 09 開頭共 10 碼）'
+    return
+  }
+  if (!userName.value.trim()) {
+    errorMsg.value = '請輸入使用者名稱'
+    return
+  }
+  if (password.value.length < 6) {
+    errorMsg.value = '密碼至少需 6 碼'
+    return
+  }
+  if (email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    errorMsg.value = '電子郵件格式不正確'
+    return
+  }
+
   loading.value = true
   try {
     await authStore.register({
@@ -76,7 +117,8 @@ const handleRegister = async () => {
       userName: userName.value,
       email: email.value,
       address: address.value,
-      birthday: birthday.value
+      birthday: birthday.value,
+      defaultBranch: defaultBranch.value || null
     })
     successMsg.value = '註冊成功！即將前往登入...'
     setTimeout(() => router.push('/login'), 1500)
@@ -123,7 +165,8 @@ const handleRegister = async () => {
   font-size: 14px;
   color: #333;
 }
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
