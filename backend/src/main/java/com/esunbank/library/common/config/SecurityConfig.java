@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -29,6 +30,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 公開端點：註冊、登入
                         .requestMatchers("/api/auth/**").permitAll()
+                        // 公開端點：瀏覽書目（免登入即可查看）
+                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
                         // 其餘一律需要登入（帶有效 token）
                         .anyRequest().authenticated()
                 )

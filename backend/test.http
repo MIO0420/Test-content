@@ -22,3 +22,28 @@ Content-Type: application/json
 "phoneNumber": "0922333444",
 "password": "test1234"
 }
+
+### 查書（不帶 token，應該被擋）
+GET http://localhost:8080/api/books
+
+### 查書（帶 token，應該成功）
+GET http://localhost:8080/api/books
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwicGhvbmVOdW1iZXIiOiIwOTIyMzMzNDQ0IiwiaWF0IjoxNzgzMzk4MzM0LCJleHAiOjE3ODM0ODQ3MzR9.-nTPbcQHDz8DamLIWe6uFmP9AE-BH8G3NCZlj_XKGf6RuinxPjHXeYJt5YpKmgr5
+
+### 借書（帶 token）
+POST http://localhost:8080/api/borrow
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwicGhvbmVOdW1iZXIiOiIwOTIyMzMzNDQ0IiwiaWF0IjoxNzgzMzk4MzM0LCJleHAiOjE3ODM0ODQ3MzR9.-nTPbcQHDz8DamLIWe6uFmP9AE-BH8G3NCZlj_XKGf6RuinxPjHXeYJt5YpKmgr5
+
+{
+  "inventoryId": 1
+}
+
+### 還書
+POST http://localhost:8080/api/borrow/return
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwicGhvbmVOdW1iZXIiOiIwOTIyMzMzNDQ0IiwiaWF0IjoxNzgzMzk4MzM0LCJleHAiOjE3ODM0ODQ3MzR9.-nTPbcQHDz8DamLIWe6uFmP9AE-BH8G3NCZlj_XKGf6RuinxPjHXeYJt5YpKmgr5
+
+{
+  "inventoryId": 1
+}
