@@ -33,7 +33,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import request from '@/api/request'
+import { getMyBorrows, returnBook } from '@/api/api'
 
 const borrows = ref([])
 const msg = ref('')
@@ -41,7 +41,7 @@ const loaded = ref(false)
 
 const loadMyBorrows = async () => {
   try {
-    borrows.value = await request.get('/api/borrow/my')
+    borrows.value = await getMyBorrows()
   } catch (err) {
     msg.value = '載入借閱清單失敗'
   } finally {
@@ -52,7 +52,7 @@ const loadMyBorrows = async () => {
 const handleReturn = async (item) => {
   msg.value = ''
   try {
-    await request.post('/api/borrow/return', { inventoryId: item.inventory_id })
+    await returnBook(item.inventory_id)
     msg.value = `《${item.book_name}》歸還成功！`
     loadMyBorrows()
   } catch (err) {

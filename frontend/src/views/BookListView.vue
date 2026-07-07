@@ -71,7 +71,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import request from '@/api/request'
+import { getBooks, borrowBook } from '@/api/api'
 
 const books = ref([])
 const selectedCategory = ref('')
@@ -95,7 +95,7 @@ const toggleDetail = (isbn) => {
 
 const loadBooks = async () => {
   try {
-    books.value = await request.get('/api/books')
+    books.value = await getBooks()
   } catch (err) {
     msg.value = '載入書籍失敗'
   }
@@ -108,7 +108,7 @@ const handleBorrow = async (book) => {
     return
   }
   try {
-    await request.post('/api/borrow', { inventoryId: book.available_inventory_id })
+    await borrowBook(book.available_inventory_id)
     msg.value = `《${book.name}》借閱成功！`
     loadBooks()
   } catch (err) {

@@ -49,7 +49,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import request from '@/api/request'
+import { getMyProfile, updateMyProfile, getBranches } from '@/api/api'
 
 const profile = ref({})
 const email = ref('')
@@ -63,10 +63,10 @@ const msgType = ref('success-msg')
 
 const loadData = async () => {
   try {
-    const [p, bs] = await Promise.all([
-      request.get('/api/profile'),
-      request.get('/api/branches')
-    ])
+      const [p, bs] = await Promise.all([
+        getMyProfile(),
+        getBranches()
+      ])
     profile.value = p
     email.value = p.email || ''
     address.value = p.address || ''
@@ -89,7 +89,7 @@ const handleSave = async () => {
   }
   saving.value = true
   try {
-    await request.put('/api/profile', {
+    await updateMyProfile({
       email: email.value,
       address: address.value,
       defaultBranch: defaultBranch.value || null

@@ -15,11 +15,12 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     // 登入：呼叫後端 API，成功則儲存 token 與使用者資訊
-    async login(phoneNumber, password) {
-      const data = await request.post('/api/auth/login', {
+      async login(phoneNumber, password) {
+      const res = await request.post('/api/auth/login', {
         phoneNumber,
         password
       })
+      const data = res.data   // 取出 ApiResponse 的 data 欄位
       this.token = data.token
       this.userId = data.userId
       this.userName = data.userName
