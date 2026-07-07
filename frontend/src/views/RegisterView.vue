@@ -17,6 +17,20 @@
           <label>密碼</label>
           <input v-model="password" type="password" placeholder="至少 6 碼" />
         </div>
+        <div class="form-group">
+          <label>電子郵件（選填）</label>
+          <input v-model="email" type="email" placeholder="example@mail.com" />
+        </div>
+
+        <div class="form-group">
+          <label>地址（選填）</label>
+          <input v-model="address" type="text" placeholder="請輸入地址" />
+        </div>
+
+        <div class="form-group">
+          <label>生日（選填）</label>
+          <input v-model="birthday" type="date" />
+        </div>
 
         <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
         <p v-if="successMsg" class="success">{{ successMsg }}</p>
@@ -47,13 +61,23 @@ const password = ref('')
 const errorMsg = ref('')
 const successMsg = ref('')
 const loading = ref(false)
+const email = ref('')
+const address = ref('')
+const birthday = ref('')
 
 const handleRegister = async () => {
   errorMsg.value = ''
   successMsg.value = ''
   loading.value = true
   try {
-    await authStore.register(phoneNumber.value, password.value, userName.value)
+    await authStore.register({
+      phoneNumber: phoneNumber.value,
+      password: password.value,
+      userName: userName.value,
+      email: email.value,
+      address: address.value,
+      birthday: birthday.value
+    })
     successMsg.value = '註冊成功！即將前往登入...'
     setTimeout(() => router.push('/login'), 1500)
   } catch (err) {

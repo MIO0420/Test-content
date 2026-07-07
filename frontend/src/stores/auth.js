@@ -30,12 +30,8 @@ export const useAuthStore = defineStore('auth', {
     },
 
     // 註冊：呼叫後端 API
-    async register(phoneNumber, password, userName) {
-      return await request.post('/api/auth/register', {
-        phoneNumber,
-        password,
-        userName
-      })
+    async register(payload) {
+        return await request.post('/api/auth/register', payload)
     },
 
     // 登出：清除狀態

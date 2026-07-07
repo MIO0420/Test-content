@@ -27,11 +27,15 @@ public class UserRepository {
     /**
      * 註冊：回傳新使用者 user_id
      */
-    public Long registerUser(String phoneNumber, String passwordHash, String userName) {
+    public Long registerUser(String phoneNumber, String passwordHash, String userName,
+                             String email, String address, String birthday) {
         Map<String, Object> params = new HashMap<>();
         params.put("p_phone_number", phoneNumber);
         params.put("p_password_hash", passwordHash);
         params.put("p_user_name", userName);
+        params.put("p_email", email);
+        params.put("p_address", address);
+        params.put("p_birthday", birthday);
 
         Map<String, Object> result = registerUserCall.execute(params);
         Object userId = result.get("p_user_id");

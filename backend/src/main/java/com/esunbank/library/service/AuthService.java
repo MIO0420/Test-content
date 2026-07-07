@@ -32,7 +32,10 @@ public class AuthService {
         return userRepository.registerUser(
                 request.getPhoneNumber(),
                 passwordHash,
-                request.getUserName()
+                request.getUserName(),
+                request.getEmail(),
+                request.getAddress(),
+                request.getBirthday()
         );
     }
 
