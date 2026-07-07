@@ -18,23 +18,27 @@ const router = createRouter({
       name: 'register',
       component: () => import('@/views/RegisterView.vue')
     },
-    {
-      path: '/books',
-      name: 'books',
-      component: () => import('@/views/BookListView.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/my-borrows',
-      name: 'my-borrows',
-      component: () => import('@/views/MyBorrowsView.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/profile',
-      name: 'profile',
-      component: () => import('@/views/ProfileView.vue'),
-      meta: { requiresAuth: true }
+{
+      path: '/',
+      component: () => import('@/components/Layout.vue'),
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'books',
+          name: 'books',
+          component: () => import('@/views/BookListView.vue')
+        },
+        {
+          path: 'my-borrows',
+          name: 'my-borrows',
+          component: () => import('@/views/MyBorrowsView.vue')
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/views/ProfileView.vue')
+        },
+      ]
     },
   ]
 })

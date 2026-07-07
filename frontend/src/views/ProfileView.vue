@@ -1,77 +1,55 @@
 <template>
-  <div class="page">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <h1>📚 圖書借閱系統</h1>
-        <nav class="user-area">
-          <router-link to="/books" class="nav-link">書籍列表</router-link>
-          <router-link to="/my-borrows" class="nav-link">我的借閱</router-link>
-          <router-link to="/profile" class="nav-link active">個人資料</router-link>
-          <span class="username">{{ authStore.userName }} 您好</span>
-          <button class="logout-btn" @click="handleLogout">登出</button>
-        </nav>
-      </div>
-    </header>
+  <h2>個人資料</h2>
+  <p v-if="msg" :class="msgType">{{ msg }}</p>
 
-    <main class="content">
-      <h2>個人資料</h2>
-      <p v-if="msg" :class="msgType">{{ msg }}</p>
+  <div class="card" v-if="loaded">
+    <div class="field">
+      <label>手機號碼</label>
+      <input :value="profile.phone_number" disabled />
+      <small>手機號碼為帳號，不可修改</small>
+    </div>
 
-      <div class="card" v-if="loaded">
-        <div class="field">
-          <label>手機號碼</label>
-          <input :value="profile.phone_number" disabled />
-          <small>手機號碼為帳號，不可修改</small>
-        </div>
+    <div class="field">
+      <label>使用者名稱</label>
+      <input :value="profile.user_name" disabled />
+    </div>
 
-        <div class="field">
-          <label>使用者名稱</label>
-          <input :value="profile.user_name" disabled />
-        </div>
+    <div class="field">
+      <label>生日</label>
+      <input :value="profile.birthday || '未設定'" disabled />
+      <small>生日不可修改</small>
+    </div>
 
-        <div class="field">
-          <label>生日</label>
-          <input :value="profile.birthday || '未設定'" disabled />
-          <small>生日不可修改</small>
-        </div>
+    <div class="field">
+      <label>電子郵件</label>
+      <input v-model="email" type="email" placeholder="尚未設定" />
+    </div>
 
-        <div class="field">
-          <label>電子郵件</label>
-          <input v-model="email" type="email" placeholder="尚未設定" />
-        </div>
+    <div class="field">
+      <label>地址</label>
+      <input v-model="address" type="text" placeholder="尚未設定" />
+    </div>
 
-        <div class="field">
-          <label>地址</label>
-          <input v-model="address" type="text" placeholder="尚未設定" />
-        </div>
+    <div class="field">
+      <label>預設取書館</label>
+      <select v-model="defaultBranch">
+        <option value="">未設定</option>
+        <option v-for="b in branches" :key="b.branch_id" :value="b.branch_id">
+          {{ b.city }} - {{ b.branch_name }}
+        </option>
+      </select>
+    </div>
 
-        <div class="field">
-          <label>預設取書館</label>
-          <select v-model="defaultBranch">
-            <option value="">未設定</option>
-            <option v-for="b in branches" :key="b.branch_id" :value="b.branch_id">
-              {{ b.city }} - {{ b.branch_name }}
-            </option>
-          </select>
-        </div>
-
-        <button class="save-btn" @click="handleSave" :disabled="saving">
-          {{ saving ? '儲存中...' : '儲存修改' }}
-        </button>
-      </div>
-      <p v-else class="loading">載入中...</p>
-    </main>
+    <button class="save-btn" @click="handleSave" :disabled="saving">
+      {{ saving ? '儲存中...' : '儲存修改' }}
+    </button>
   </div>
+  <p v-else class="loading">載入中...</p>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import request from '@/api/request'
-
-const router = useRouter()
-const authStore = useAuthStore()
 
 const profile = ref({})
 const email = ref('')
@@ -126,40 +104,15 @@ const handleSave = async () => {
   }
 }
 
-const handleLogout = () => {
-  authStore.logout()
-  router.push('/login')
-}
-
 onMounted(loadData)
 </script>
+
 <style scoped>
-.page { min-height: 100vh; background: var(--bg); }
-.topbar { background: var(--esun-green); color: white; box-shadow: var(--shadow); }
-.topbar-inner {
-  max-width: 1080px; margin: 0 auto; padding: 16px 32px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.topbar h1 { font-size: 19px; font-weight: 600; }
-.user-area { display: flex; align-items: center; gap: 8px; font-size: 14px; }
-.nav-link {
-  color: rgba(255,255,255,0.85); text-decoration: none;
-  padding: 7px 12px; border-radius: 8px; transition: all 0.2s;
-}
-.nav-link:hover { background: rgba(255,255,255,0.12); color: white; }
-.nav-link.active { background: rgba(255,255,255,0.18); color: white; font-weight: 600; }
-.username { margin: 0 8px 0 12px; opacity: 0.95; }
-.logout-btn {
-  background: rgba(255,255,255,0.15); color: white;
-  border: 1px solid rgba(255,255,255,0.4);
-  padding: 7px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s;
-}
-.logout-btn:hover { background: rgba(255,255,255,0.25); }
-.content { padding: 32px; max-width: 560px; margin: 0 auto; }
-.content h2 { font-size: 22px; margin-bottom: 20px; color: var(--text); }
 .card {
   background: var(--card-bg); padding: 32px;
   border-radius: var(--radius); box-shadow: var(--shadow);
+  max-width: 560px;
+  margin: 0 auto;
 }
 .field { margin-bottom: 20px; }
 .field label {
