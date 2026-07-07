@@ -1,40 +1,39 @@
-
 <template>
   <div class="auth-container">
     <div class="auth-card">
-      <h1>圖書借閱系統</h1>
-      <h2>註冊</h2>
+      <div class="brand">
+        <div class="brand-icon">📚</div>
+        <h1>圖書借閱系統</h1>
+        <p class="subtitle">建立您的專屬帳號</p>
+      </div>
 
       <form @submit.prevent="handleRegister">
         <div class="form-group">
-          <label>手機號碼</label>
+          <label>手機號碼 <span class="req">*</span></label>
           <input v-model="phoneNumber" type="text" placeholder="09xxxxxxxx" />
         </div>
         <div class="form-group">
-          <label>使用者名稱</label>
+          <label>使用者名稱 <span class="req">*</span></label>
           <input v-model="userName" type="text" placeholder="請輸入名稱" />
         </div>
         <div class="form-group">
-          <label>密碼</label>
+          <label>密碼 <span class="req">*</span></label>
           <input v-model="password" type="password" placeholder="至少 6 碼" />
         </div>
         <div class="form-group">
-          <label>電子郵件（選填）</label>
+          <label>電子郵件</label>
           <input v-model="email" type="email" placeholder="example@mail.com" />
         </div>
-
         <div class="form-group">
-          <label>地址（選填）</label>
+          <label>地址</label>
           <input v-model="address" type="text" placeholder="請輸入地址" />
         </div>
-
         <div class="form-group">
-          <label>生日（選填）</label>
+          <label>生日</label>
           <input v-model="birthday" type="date" />
         </div>
-
         <div class="form-group">
-          <label>預設取書館（選填）</label>
+          <label>預設取書館</label>
           <select v-model="defaultBranch">
             <option value="">請選擇分館</option>
             <option v-for="b in branches" :key="b.branch_id" :value="b.branch_id">
@@ -70,14 +69,14 @@ const authStore = useAuthStore()
 const phoneNumber = ref('')
 const userName = ref('')
 const password = ref('')
-const errorMsg = ref('')
-const successMsg = ref('')
-const loading = ref(false)
 const email = ref('')
 const address = ref('')
 const birthday = ref('')
 const defaultBranch = ref('')
 const branches = ref([])
+const errorMsg = ref('')
+const successMsg = ref('')
+const loading = ref(false)
 
 onMounted(async () => {
   try {
@@ -91,7 +90,6 @@ const handleRegister = async () => {
   errorMsg.value = ''
   successMsg.value = ''
 
-  // === 前端防呆驗證 ===
   if (!/^09\d{8}$/.test(phoneNumber.value)) {
     errorMsg.value = '手機號碼格式錯誤（需為 09 開頭共 10 碼）'
     return
@@ -136,63 +134,94 @@ const handleRegister = async () => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f0f2f5;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #1a6c3f 0%, #145230 100%);
 }
 .auth-card {
-  background: white;
+  background: var(--card-bg);
   padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-  width: 360px;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 420px;
 }
-.auth-card h1 {
-  font-size: 20px;
+.brand {
   text-align: center;
-  color: #1a6c3f;
-  margin-bottom: 8px;
+  margin-bottom: 28px;
 }
-.auth-card h2 {
-  font-size: 16px;
-  text-align: center;
-  color: #666;
-  margin-bottom: 24px;
-  font-weight: normal;
-}
+.brand-icon { font-size: 44px; margin-bottom: 12px; }
+.brand h1 { font-size: 22px; color: var(--esun-green); margin-bottom: 6px; }
+.subtitle { font-size: 14px; color: var(--text-light); }
 .form-group { margin-bottom: 16px; }
 .form-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
   font-size: 14px;
-  color: #333;
+  font-weight: 500;
+  color: var(--text);
 }
+.req { color: var(--danger); }
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 15px;
+  transition: all 0.2s;
+  background: white;
+}
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--esun-green);
+  box-shadow: 0 0 0 3px var(--esun-green-light);
+}
+.form-group input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 100px white inset;
+  -webkit-text-fill-color: var(--text);
 }
 button {
   width: 100%;
-  padding: 12px;
-  background: #1a6c3f;
+  padding: 13px;
+  background: var(--esun-green);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   margin-top: 8px;
+  transition: all 0.2s;
 }
-button:disabled { background: #aaa; cursor: not-allowed; }
-.error { color: #d33; font-size: 14px; margin: 8px 0; }
-.success { color: #1a6c3f; font-size: 14px; margin: 8px 0; }
+button:hover:not(:disabled) {
+  background: var(--esun-green-dark);
+  transform: translateY(-1px);
+}
+button:disabled { background: #b0b8c0; cursor: not-allowed; }
+.error {
+  color: var(--danger);
+  font-size: 14px;
+  margin: 4px 0 12px;
+  padding: 10px 12px;
+  background: #fdecec;
+  border-radius: 8px;
+}
+.success {
+  color: var(--esun-green);
+  font-size: 14px;
+  margin: 4px 0 12px;
+  padding: 10px 12px;
+  background: var(--esun-green-light);
+  border-radius: 8px;
+}
 .switch {
   text-align: center;
-  margin-top: 16px;
+  margin-top: 20px;
   font-size: 14px;
-  color: #666;
+  color: var(--text-light);
 }
-.switch a { color: #1a6c3f; text-decoration: none; }
+.switch a { color: var(--esun-green); text-decoration: none; font-weight: 600; }
+.switch a:hover { text-decoration: underline; }
 </style>
