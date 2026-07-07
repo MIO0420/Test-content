@@ -29,14 +29,15 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 公開端點：註冊、登入
                         .requestMatchers("/api/auth/**").permitAll()
-                        // 公開端點：瀏覽書目（免登入即可查看）
                         .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-                        // 其餘一律需要登入（帶有效 token）
                         .anyRequest().authenticated()
                 )
-                // 把 JWT 過濾器裝在帳密驗證過濾器之前
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp ->
+                                csp.policyDirectives("default-src 'self'; script-src 'self'"))
+                        .frameOptions(frame -> frame.deny())
+                )
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);
 
