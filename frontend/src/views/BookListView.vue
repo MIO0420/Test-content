@@ -11,6 +11,15 @@
 
     <main class="content">
       <h2>書籍列表</h2>
+
+      <div class="filter-bar">
+        <label>分類篩選：</label>
+        <select v-model="selectedCategory">
+          <option value="">全部分類</option>
+          <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+        </select>
+        <span class="count">共 {{ filteredBooks.length }} 本</span>
+      </div>
       <p v-if="msg" class="msg">{{ msg }}</p>
 
       <table v-if="books.length" class="book-table">
@@ -25,7 +34,7 @@
           </tr>
         </thead>
 <tbody>
-          <template v-for="book in books" :key="book.isbn">
+          <template v-for="book in filteredBooks" :key="book.isbn">
             <tr>
               <td>
                 <a href="#" class="book-name" @click.prevent="toggleDetail(book.isbn)">
@@ -66,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import request from '@/api/request'
@@ -75,6 +84,19 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const books = ref([])
+const selectedCategory = ref('')
+
+// 從書單自動抽出所有不重複的分類
+const categories = computed(() => {
+  const set = new Set(books.value.map(b => b.category).filter(Boolean))
+  return Array.from(set)
+})
+
+// 依選擇的分類過濾書單
+const filteredBooks = computed(() => {
+  if (!selectedCategory.value) return books.value
+  return books.value.filter(b => b.category === selectedCategory.value)
+})
 const msg = ref('')
 const expandedIsbn = ref('')
 
@@ -116,6 +138,20 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.filter-bar label { font-size: 14px; color: #333; }
+.filter-bar select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.filter-bar .count { font-size: 14px; color: #888; margin-left: auto; }
 .book-name {
   color: #1a6c3f;
   text-decoration: none;
