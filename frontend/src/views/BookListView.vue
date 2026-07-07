@@ -4,6 +4,7 @@
       <h1>📚 圖書借閱系統</h1>
         <div class="user-area">
         <router-link to="/my-borrows" class="nav-link">我的借閱</router-link>
+        <router-link to="/profile" class="nav-link">個人資料</router-link>
         <span>{{ authStore.userName }} 您好</span>
         <button class="logout-btn" @click="handleLogout">登出</button>
       </div>
