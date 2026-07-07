@@ -1,0 +1,14 @@
+# ===== 資料庫連線設定 =====
+# 請將下列值改成你的 MySQL 連線資訊
+spring.datasource.url=jdbc:mysql://localhost:3306/library_db?serverTimezone=UTC&characterEncoding=UTF-8
+spring.datasource.username=root
+spring.datasource.password=你的資料庫密碼
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# ===== 伺服器埠 =====
+server.port=8080
+
+# ===== JWT 設定 =====
+# jwt.secret 請自行設定一組足夠長（至少 32 字元）的密鑰
+jwt.secret=請填入一組至少32字元的JWT密鑰字串
+jwt.expiration=86400000

@@ -1,6 +1,6 @@
 -- =====================================================================
 -- 玉山銀行 圖書借閱系統 - DDL (資料庫結構定義)
--- 內容：建立資料庫、六張資料表、五支 Stored Procedure
+-- 內容：建立資料庫、六張資料表、七支 Stored Procedure
 -- 字元集：utf8mb4 / utf8mb4_0900_ai_ci
 -- 時區：所有時間欄位以 UTC (UTC+0) 儲存
 -- =====================================================================
@@ -140,6 +140,9 @@ CREATE PROCEDURE sp_register_user(
   IN  p_phone_number  VARCHAR(20),
   IN  p_password_hash VARCHAR(255),
   IN  p_user_name     VARCHAR(50),
+  IN  p_email         VARCHAR(100),
+  IN  p_address       VARCHAR(255),
+  IN  p_birthday      DATE,
   OUT p_user_id       BIGINT
 )
 BEGIN
@@ -156,8 +159,8 @@ BEGIN
 
   SET p_user_id = LAST_INSERT_ID();
 
-  INSERT INTO user_profile (user_id, user_name, registration_time)
-  VALUES (p_user_id, p_user_name, UTC_TIMESTAMP());
+  INSERT INTO user_profile (user_id, user_name, email, address, birthday, registration_time)
+  VALUES (p_user_id, p_user_name, p_email, p_address, p_birthday, UTC_TIMESTAMP());
 
   COMMIT;
 END$$
@@ -191,6 +194,35 @@ BEGIN
   UPDATE user_profile
   SET last_login_time = UTC_TIMESTAMP()
   WHERE user_id = p_user_id;
+END$$
+DELIMITER ;
+
+-- ---------------------------------------------------------------------
+-- sp_list_books：查詢書籍清單（含可借數量與一個可借的 inventory_id）
+-- ---------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_list_books;
+DELIMITER $$
+CREATE PROCEDURE sp_list_books()
+BEGIN
+  SELECT
+    b.isbn,
+    b.name,
+    b.author,
+    b.translator,
+    b.original_author,
+    b.introduction,
+    b.publisher,
+    b.published_date,
+    b.category,
+    b.language,
+    COUNT(i.inventory_id) AS total_count,
+    SUM(CASE WHEN i.status = '在庫' THEN 1 ELSE 0 END) AS available_count,
+    MIN(CASE WHEN i.status = '在庫' THEN i.inventory_id END) AS available_inventory_id
+  FROM books b
+  LEFT JOIN inventory i ON b.isbn = i.isbn
+  GROUP BY b.isbn, b.name, b.author, b.translator, b.original_author,
+           b.introduction, b.publisher, b.published_date, b.category, b.language
+  ORDER BY b.isbn;
 END$$
 DELIMITER ;
 
@@ -280,6 +312,32 @@ BEGIN
   WHERE inventory_id = p_inventory_id;
 
   COMMIT;
+END$$
+DELIMITER ;
+
+-- ---------------------------------------------------------------------
+-- sp_list_my_borrows：查詢某使用者目前未歸還的借閱清單（含書名）
+-- ---------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_list_my_borrows;
+DELIMITER $$
+CREATE PROCEDURE sp_list_my_borrows(
+  IN p_user_id BIGINT
+)
+BEGIN
+  SELECT
+    br.record_id,
+    br.inventory_id,
+    br.borrowing_time,
+    b.isbn,
+    b.name AS book_name,
+    b.author,
+    inv.barcode
+  FROM borrowing_records br
+  JOIN inventory inv ON br.inventory_id = inv.inventory_id
+  JOIN books b ON inv.isbn = b.isbn
+  WHERE br.user_id = p_user_id
+    AND br.return_time IS NULL
+  ORDER BY br.borrowing_time DESC;
 END$$
 DELIMITER ;
 
